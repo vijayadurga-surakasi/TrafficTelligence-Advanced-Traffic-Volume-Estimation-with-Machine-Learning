@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Traffic Volume Estimation Result</title>
+    <style>
+        body {
+            background: url("https://cdn.motor1.com/images/mgl/6xJ88/s3/2021-jaguar-xe-p300-r-dynamic-black.jpg") no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        .result-box {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+            width: 60%;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .result-content {
+            font-size: 20px;
+            line-height: 1.8;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-box">
+        <h1>Traffic Volume Estimation</h1>
+        <div class="result-content">
+            <p><strong>Holiday:</strong> {{ holiday }}</p>
+            <p><strong>Temperature:</strong> {{ temp }} °C</p>
+            <p><strong>Rain:</strong> {{ rain }}</p>
+            <p><strong>Snow:</strong> {{ snow }}</p>
+            <p><strong>Weather:</strong> {{ weather }}</p>
+            <p><strong>Date:</strong> {{ year }}-{{ month }}-{{ day }}</p>
+            <p><strong>Time:</strong> {{ hours }}:{{ minutes }}:{{ seconds }}</p>
+            <hr>
+            <h2>Predicted Traffic Volume: {{ result }}</h2>
+        </div>
+    </div>
+</body>
+</html>
