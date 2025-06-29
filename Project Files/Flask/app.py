@@ -1,50 +1,40 @@
 import numpy as np
-import pandas as pd
 import pickle
-from flask import Flask, request, render_template
+import joblib
+import matplotlib
+import matplotlib.pyplot as plt
+import time
+import pandas
+import os
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
+import pickle
+with open(r'model.pkl', 'rb') as file:
+    file.seek(0)
+    model = pickle.load(open("model.pkl", 'rb'))
+    scale = pickle.load(open("scale.pkl", 'rb'))
 
-# Load the model and scaler
-model = pickle.load(open("model.pkl", "rb"))
-scale = pickle.load(open("scale.pkl", "rb"))
-
-@app.route('/')
+@app.route('/') 
 def home():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=["POST", "GET"])
 def predict():
-    # Extract input values from form
-    input_features = [float(x) for x in request.form.values()]
-    features_values = np.array(input_features).reshape(1, -1)
+   
+    input_feature = [float(x) for x in request.form.values()]
+    features_values = [np.array(input_feature)]
+    names = [['holiday', 'temp', 'rain', 'snow', 'weather', 'year', 'month', 'day',
+              'hours', 'minutes', 'seconds']]
+    data = pandas.DataFrame(features_values, columns=names)
 
-    # Column names must match training data
-    names = ['holiday', 'temp', 'rain', 'snow', 'weather', 'year', 'month', 'day', 'hours', 'minutes', 'seconds']
-    
-    # Create a DataFrame
-    data = pd.DataFrame(features_values, columns=names)
+    prediction = model.predict(data)
 
-    # Scale the data
-    data_scaled = scale.transform(data)
+    text = f"Estimated Traffic Volume: {int(prediction[0])}"
+    return render_template("result.html", result=text)
 
-    # Predict using the loaded model
-    prediction = model.predict(data_scaled)[0]
-
-    # Render result page with input + prediction
-    return render_template("result.html",
-                           holiday=request.form['holiday'],
-                           temp=request.form['temp'],
-                           rain=request.form['rain'],
-                           snow=request.form['snow'],
-                           weather=request.form['weather'],
-                           year=request.form['year'],
-                           month=request.form['month'],
-                           day=request.form['day'],
-                           hours=request.form['hours'],
-                           minutes=request.form['minutes'],
-                           seconds=request.form['seconds'],
-                           result=int(prediction))
 
 if __name__ == "__main__":
-    app.run(debug=True, port = 5000)
+
+    port = int(os.environ.get('PORT', 5000))
+    app.run(port=port, debug=True, use_reloader=False)
